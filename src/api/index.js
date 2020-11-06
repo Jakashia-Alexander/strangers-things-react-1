@@ -1,18 +1,70 @@
-const BASE = "http://strangers-things.herokuapp.com/api/2007-LSU-RM-WEB-PT"
+import React, { useState } from "react";
 
-function setToken(token) {
-  localStorage.setItem('bearer-token', token);
-}
+const BASE_URL =
+  "https://strangers-things.herokuapp.com/api/2007-LSU-RM-WEB-PT";
 
-function getToken() {
-  return localStorage.getItem('bearer-token');
-}
+export const getToken = () => {
+  return localStorage.getItem("auth-token");
+};
 
-// write functions like
-// registerUser -> make request, when JSON comes back, store that token using setToken
-// signIn
-// fetchPosts
-// createPost -> n eeds a bearer token,so use getToken() before making fetch request so you can build the correct header...
-// 
+export const clearToken = () => {
+  localStorage.removeItem("auth-token");
+};
 
-// each of these should be async, should make a valid call to an endpoint, possibly setting the correct header...
+const setToken = (token) => {
+  localStorage.setItem("auth-token", token);
+};
+
+export const registerUser = async (username, password) => {
+  const response = await fetch(`${BASE_URL}/users/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user: {
+        username: username,
+        password: password,
+      },
+    }),
+  });
+
+  const { error, data } = await response.json();
+
+  if (error) {
+    throw Error(error.message);
+  }
+
+  if (data && data.token) {
+    setToken(data.token);
+  }
+
+  return data;
+};
+
+export const loginUser = async (username, password) => {
+  const response = await fetch(`${BASE_URL}/users/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user: {
+        username: username,
+        password: password,
+      },
+    }),
+  });
+
+  const { error, data } = await response.json();
+
+  if (error) {
+    throw Error(error.message);
+  }
+
+  if (data && data.token) {
+    setToken(data.token);
+  }
+
+  return data;
+};
