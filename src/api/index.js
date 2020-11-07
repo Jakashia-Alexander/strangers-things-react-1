@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 const BASE_URL =
   "https://strangers-things.herokuapp.com/api/2007-LSU-RM-WEB-PT";
 
@@ -15,12 +13,24 @@ const setToken = (token) => {
   localStorage.setItem("auth-token", token);
 };
 
-export const registerUser = async (username, password) => {
-  const response = await fetch(`${BASE_URL}/users/register`, {
+function buildHeaders() {
+  let base = {
+    "Content-Type": "application/json",
+  };
+
+  if (getToken()) {
+    base["Authorization"] = `Bearer ${getToken()}`;
+  }
+
+  return base;
+}
+
+export const auth = async (username, password, isNew = false) => {
+  const url = `${BASE_URL}/users` + (isNew ? "/register" : "/login");
+
+  const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: buildHeaders(),
     body: JSON.stringify({
       user: {
         username: username,
@@ -42,19 +52,17 @@ export const registerUser = async (username, password) => {
   return data;
 };
 
-export const loginUser = async (username, password) => {
-  const response = await fetch(`${BASE_URL}/users/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      user: {
-        username: username,
-        password: password,
-      },
-    }),
-  });
+export const hitAPI = async (method, endpoint, bodyObj) => {
+  const payload = {
+    method: method,
+    headers: buildHeaders(),
+  };
+
+  if (bodyObj) {
+    payload.body = JSON.stringify(bodyObj);
+  }
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, payload);
 
   const { error, data } = await response.json();
 
