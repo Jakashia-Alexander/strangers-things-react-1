@@ -10,7 +10,7 @@ const Auth = (props) => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   return (
-    <form onSubmit={(event) => event.preventDefault()}>
+    <form className="auth" onSubmit={(event) => event.preventDefault()}>
       <h3>Register or Log In</h3>
       {errorMessage ? <h5 className="error">{errorMessage}</h5> : null}
       <input
@@ -18,12 +18,14 @@ const Auth = (props) => {
         value={username}
         onChange={(event) => setUsername(event.target.value)}
         placeholder="username"
+        className="login"
       />
       <input
         type="password"
         value={password}
         onChange={(event) => setPassword(event.target.value)}
         placeholder="password"
+        className="login"
       />
       <button
         onClick={async (event) => {

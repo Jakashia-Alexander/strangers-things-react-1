@@ -5,11 +5,15 @@ import {React, useState} from 'react';
 const Search = (props) => {
     const {filterTerm, setFilterTerm} = props;
 
-    return <form id="search" onSubmit={(event) => {
+    return <form id="search" className="search" onSubmit={(event) => {
         event.preventDefault();
     }}>
-<label htmlFor='keywords'> SEARCH </label>
-        <input id='keywords' type='text' placeholder='Enter Keywords'
+        <label htmlFor='keywords'> <strong>SEARCH</strong></label>
+        <input 
+        id='keywords' 
+        type='text' 
+        placeholder='Enter Keywords for Search'
+        className="search"
         value={ filterTerm }
         onChange={(event) => {
             setFilterTerm(event.target.value)
