@@ -176,3 +176,7 @@ input {
 .deletePost {
   margin-top: 5px;
 }
+
+.messageButton {
+  margin-top: 10px;
+}

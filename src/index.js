@@ -2,13 +2,28 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 import { getToken, clearToken, hitAPI } from "./api";
-import { Auth, Title, Posts, Search } from "./components";
+import { Auth, Title, Posts, Search, Post_Form, Messages } from "./components";
 
 const App = () => {
   // a piece of state that represents the status of the current user
   const [isLoggedIn, setIsLoggedIn] = useState(!!getToken());
   const [postList, setPostList] = useState([]);
   const [filterTerm, setFilterTerm] = useState("");
+  const [messageList, setMessageList] = useState([]);
+
+  function addNewPost(newPost) {
+    setPostList([...postList, newPost]);
+  }
+
+  function removePost(post) {
+    setPostList(
+      postList.filter(x => x !== post)
+    )
+  }
+
+  function addNewMessage(newMessage) {
+    setMessageList([...messageList, newMessage]);
+  }
 
   useEffect(() => {
     hitAPI("GET", "/posts")
@@ -23,7 +38,7 @@ const App = () => {
     <div className="app">
       <Title />
       <Search filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
-      <Posts postList={postList} filterTerm={filterTerm} />
+      <Posts postList={postList} setPostList={ setPostList } filterTerm={filterTerm} />
       {isLoggedIn ? (
         <>
           <div className="logout">
@@ -44,8 +59,24 @@ const App = () => {
       ) : (
         <Auth setIsLoggedIn={setIsLoggedIn} />
       )}
+      {isLoggedIn ? <> 
+        <Post_Form addNewPost={addNewPost} /> 
+        <Messages /> </> 
+        : null}
+
     </div>
   );
 };
 
 ReactDOM.render(<App />, document.getElementById("app"));
+
+
+// {isLoggedIn ? 
+//   postList.map((post, index) => {
+//     post.isAuthor ? null : <button className="messageButton"
+//     onClick={() =>
+//       <Messages />
+//     }
+//   >SEND A MESSAGE ABOUT THIS ITEM</button>
+//   })
+//    : null }

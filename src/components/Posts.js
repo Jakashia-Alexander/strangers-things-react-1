@@ -1,8 +1,12 @@
 import { React, useState } from "react";
 
+import { hitAPI } from "../api";
+import {Messages} from "./index";
+
 const Posts = (props) => {
   const allPost = props.postList;
   const filterTerm = props.filterTerm;
+  const setPostList = props.setPostList;
 
   // allPost.filter(post =>{ return post.title.includes(filterTerm) || post.description.includes(filterTerm) }).map()
 
@@ -15,6 +19,7 @@ const Posts = (props) => {
             post.description.toLowerCase().includes(filterTerm.toLowerCase())
           );
         })
+        .reverse()
         .map((post, idx) => {
           return (
             <div
@@ -33,35 +38,44 @@ const Posts = (props) => {
               {post.willDeliver ? <p>{post.willDeliver}</p> : null}
               <p><strong>Price:</strong> {post.price}</p>
               <p><strong>Posted on:</strong>{post.createdAt}</p>
-              {!post.isAuthor ? null : (
+              {!post.isAuthor ? 
+              <button className="messageButton" onClick={() =>
+                  <Messages />
+                }
+              >SEND A MESSAGE ABOUT THIS ITEM</button> 
+              :
+               (
                 <>
                   <button
                     className="deletePost"
-                    onClick={() => {
-                      allPost.filter((post) => {
-                        return post._id //pick up here...figure out how to access the active and make it false
-                      })
+                    onClick={async () => {
+                      await hitAPI("DELETE", "/posts/" + post._id)
+                      const data = await hitAPI("GET", "/posts")
+                      const {posts} = data;
+                      setPostList(posts);
                     }}
                   >
                     DELETE
                   </button>
 
-                  <div className="messages">
+                  {/* <div className="messages">
                     {post.messages.map((message, index) => {
                       <>
                         <p>{message[index].fromUser.username}</p>
                         <p>{message[index].content}</p>
                       </>
                     })}
-                  </div>
+                  </div> */}
                 </>
               )}
-              
+
+
             </div>
           );
         })}
     </div>
   );
-};
+}
+
 
 export default Posts;
