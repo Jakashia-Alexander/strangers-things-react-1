@@ -3,10 +3,8 @@ import React, { useState, useEffect } from "react";
 import { hitAPI } from "../api";
 
 const PostForm = (props) => {
-  // maybe later we read title, etc from props... if they exist
   const { addNewPost, _id, setEditablePost, updatePost } = props;
 
-  // title, description, price, location, willDeliver
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -37,7 +35,11 @@ const PostForm = (props) => {
       onSubmit={async (event) => {
         event.preventDefault();
 
-        if (title.length === 0 || description.length === 0 || price.length === 0) {
+        if (
+          title.length === 0 ||
+          description.length === 0 ||
+          price.length === 0
+        ) {
           setIsDirty(true);
           return;
         }
@@ -77,6 +79,7 @@ const PostForm = (props) => {
         gridTemplateColumns: "1fr",
         maxWidth: "480px",
         gap: "8px",
+        fontsize: "30px",
       }}
     >
       {_id ? <h3>Update Your Post</h3> : <h3>Whatcha got?</h3>}
@@ -112,6 +115,7 @@ const PostForm = (props) => {
       />
       <label>
         <input
+          className="checkbox"
           type="checkbox"
           checked={willDeliver}
           onChange={() => setWillDeliver(!willDeliver)}

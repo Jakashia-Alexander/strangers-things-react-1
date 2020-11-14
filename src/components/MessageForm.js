@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import {hitAPI} from "../api";
+import { hitAPI } from "../api";
 
 const MessageForm = (props) => {
   const [messageContent, setMessageContent] = useState("");
@@ -9,7 +9,6 @@ const MessageForm = (props) => {
   return (
     <form
       className="messages"
-     
       style={{
         alignSelf: "flex-start",
         display: "grid",
@@ -18,7 +17,7 @@ const MessageForm = (props) => {
         gap: "8px",
       }}
     >
-     <h3>Messages</h3>
+      <h3>Interested? Send a message to the seller.</h3>
       <textarea
         type="text"
         placeholder="message content"
@@ -27,22 +26,27 @@ const MessageForm = (props) => {
         value={messageContent}
         onChange={(event) => setMessageContent(event.target.value)}
       />
-      <button onClick={async (event) => {
-        event.preventDefault();
+      <button
+        onClick={async (event) => {
+          event.preventDefault();
 
-        const messageData = {
-          message: {
-            content: messageContent
-          },
-        };
+          const messageData = {
+            message: {
+              content: messageContent,
+            },
+          };
 
-        try {
-          await hitAPI("POST", "/posts/" + postId + "/messages", messageData);
-          setMessageContent('');
-        } catch (error) {
-          console.error(error);
-        }
-      }}> SEND MESSAGE</button>
+          try {
+            await hitAPI("POST", "/posts/" + postId + "/messages", messageData);
+            setMessageContent("");
+          } catch (error) {
+            console.error(error);
+          }
+        }}
+      >
+        {" "}
+        SEND MESSAGE
+      </button>
     </form>
   );
 };
