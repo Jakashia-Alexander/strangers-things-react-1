@@ -10,10 +10,26 @@ const App = () => {
   const [postList, setPostList] = useState([]);
   const [filterTerm, setFilterTerm] = useState("");
   const [messageList, setMessageList] = useState([]);
+  const [viewMessages, setViewMessages] = useState(false);
+  const [userMessages, setUserMessages] = useState([]);
+  const [editablePost, setEditablePost] = useState({});
 
   function addNewPost(newPost) {
     setPostList([...postList, newPost]);
   }
+
+  function updatePost(updatedPost) {
+    let index = postList.findIndex((post) => {
+      return post._id === updatedPost._id;
+    });
+
+    if (index > -1) {
+      let postListCopy = [...postList];
+      postListCopy[index] = updatedPost;
+      setPostList(postListCopy);
+    }
+  }
+
 
   function removePost(post) {
     setPostList(
@@ -34,11 +50,26 @@ const App = () => {
       .catch(console.error);
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUserMessages([]);
+      return;
+    }
+
+    hitAPI("get", "/users/me")
+      .then((data) => {
+        const { messages } = data;
+        setUserMessages(messages);
+      })
+      .catch(console.error);
+  }, [isLoggedIn]);
+
+
   return (
     <div className="app">
       <Title />
       <Search filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
-      <Posts postList={postList} setPostList={ setPostList } filterTerm={filterTerm} />
+      <Posts postList={ postList } setPostList={ setPostList } filterTerm={ filterTerm } setEditablePost={ setEditablePost } />
       {isLoggedIn ? (
         <>
           <div className="logout">
@@ -49,6 +80,7 @@ const App = () => {
                 onClick={() => {
                   clearToken();
                   setIsLoggedIn(false);
+                  window.location.reload(false);
                 }}
               >
                 LOG OUT
@@ -60,7 +92,7 @@ const App = () => {
         <Auth setIsLoggedIn={setIsLoggedIn} />
       )}
       {isLoggedIn ? <> 
-        <Post_Form addNewPost={addNewPost} /> 
+        <Post_Form addNewPost={addNewPost} updatePost={updatePost} {...editablePost} setEditablePost={setEditablePost} /> 
          </> 
         : null}
 

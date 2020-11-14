@@ -18,7 +18,7 @@ const MessageForm = (props) => {
         gap: "8px",
       }}
     >
-      <h3>Messages</h3>
+     <h3>Messages</h3>
       <textarea
         type="text"
         placeholder="message content"
@@ -38,6 +38,7 @@ const MessageForm = (props) => {
 
         try {
           await hitAPI("POST", "/posts/" + postId + "/messages", messageData);
+          setMessageContent('');
         } catch (error) {
           console.error(error);
         }

@@ -1,17 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { hitAPI } from "../api";
 
 const PostForm = (props) => {
   // maybe later we read title, etc from props... if they exist
-  const { addNewPost } = props;
+  const { addNewPost, _id, setEditablePost, updatePost } = props;
 
   // title, description, price, location, willDeliver
-  const [title, setTitle] = useState(props.title || "");
-  const [description, setDescription] = useState(props.description || "");
-  const [price, setPrice] = useState(props.price || "");
-  const [location, setLocation] = useState(props.location || "");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [location, setLocation] = useState("");
   const [willDeliver, setWillDeliver] = useState(false);
+
+  useEffect(() => {
+    setTitle(props.title || "");
+    setDescription(props.description || "");
+    setPrice(props.price || "");
+    setLocation(props.location || "");
+    setWillDeliver(props.willDeliver || false);
+  }, [_id]);
+
+  function clearForm() {
+    setTitle("");
+    setDescription("");
+    setPrice("");
+    setLocation("");
+    setWillDeliver(false);
+  }
 
   const [isDirty, setIsDirty] = useState(false);
 
@@ -40,8 +56,17 @@ const PostForm = (props) => {
         }
 
         try {
-          const result = await hitAPI("POST", "/posts", postData);
-          addNewPost(result.post);
+          if (_id) {
+            const result = await hitAPI("PATCH", `/posts/${_id}`, postData);
+            const { post } = result;
+            post.messages = props.messages;
+            updatePost(post);
+            setEditablePost({});
+          } else {
+            const result = await hitAPI("POST", "/posts", postData);
+            addNewPost(result.post);
+            clearForm();
+          }
         } catch (error) {
           console.error(error);
         }
@@ -54,7 +79,8 @@ const PostForm = (props) => {
         gap: "8px",
       }}
     >
-      <h3>Whatcha got?</h3>
+      {_id ? <h3>Update Your Post</h3> : <h3>Whatcha got?</h3>}
+
       <input
         type="text"
         placeholder="title for your post"

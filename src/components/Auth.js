@@ -32,6 +32,7 @@ const Auth = (props) => {
           try {
             const result = await auth(username, password, true);
             setIsLoggedIn(true);
+            window.location.reload(false);
           } catch (error) {
             setErrorMessage(error.message);
           }
@@ -44,6 +45,7 @@ const Auth = (props) => {
           try {
             const result = await auth(username, password);
             setIsLoggedIn(true);
+            window.location.reload(false);
           } catch (error) {
             setErrorMessage(error.message);
           }

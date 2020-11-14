@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 
 import { hitAPI } from "../api";
 import {MessageForm} from "./index";
@@ -9,9 +9,12 @@ const Posts = (props) => {
   const filterTerm = props.filterTerm;
   const setPostList = props.setPostList;
   const [isLoggedIn, setIsLoggedIn] = useState(!!getToken())
+  const { postList, setEditablePost } = props;
+
 
   // allPost.filter(post =>{ return post.title.includes(filterTerm) || post.description.includes(filterTerm) }).map()
 
+ 
   return (
     <div className="posts">
       {allPost
@@ -40,15 +43,23 @@ const Posts = (props) => {
               {post.willDeliver ? <p>{post.willDeliver}</p> : null}
               <p><strong>Price:</strong> {post.price}</p>
               <p><strong>Posted on:</strong>{post.createdAt}</p>
-              {
-                !post.isAuthor && isLoggedIn ?
+              {post.isAuthor ? (
+              <button className='edit'
+                onClick={() => {
+                  setEditablePost(post);
+                }}
+              >
+                EDIT
+              </button>
+            ) : null}
+              
+
+              {!post.isAuthor && isLoggedIn ? 
                 <MessageForm postId={ post._id } />
-                : null
-              }
-              {!post.isAuthor && isLoggedIn ? // COME BACK TO THIS!! FIGURE OUT WHY MESSAGE BUTTON SHOWS UP WHEN NOT LOGGED IN!!!
-              null 
-              :
-               (
+                : null }
+
+              {post.isAuthor && isLoggedIn ?
+               
                 <>
                   <button
                     className="deletePost"
@@ -60,20 +71,20 @@ const Posts = (props) => {
                     }}
                   >
                     DELETE
-                  </button>
+                  </button> </>: null }
 
                  {post.isAuthor ? <div className="messageInbox">
                    <h3>MESSAGES BELOW HERE</h3>
                     {post.messages.map((message) => {
-                      console.log(post.messages)
+                      
                       return <>
                         <p>{message.fromUser.username}: {message.content}</p>
                         
                       </>
                     })}
                    </div> : null} 
-                </>
-              )}
+                
+              
 
 
             </div>
