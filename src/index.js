@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 import { getToken, clearToken, hitAPI } from "./api";
-import { Auth, Title, Posts, Search, Post_Form, Messages } from "./components";
+import { Auth, Title, Posts, Search, Post_Form } from "./components";
 
 const App = () => {
   // a piece of state that represents the status of the current user
@@ -61,7 +61,7 @@ const App = () => {
       )}
       {isLoggedIn ? <> 
         <Post_Form addNewPost={addNewPost} /> 
-        <Messages /> </> 
+         </> 
         : null}
 
     </div>
@@ -71,12 +71,3 @@ const App = () => {
 ReactDOM.render(<App />, document.getElementById("app"));
 
 
-// {isLoggedIn ? 
-//   postList.map((post, index) => {
-//     post.isAuthor ? null : <button className="messageButton"
-//     onClick={() =>
-//       <Messages />
-//     }
-//   >SEND A MESSAGE ABOUT THIS ITEM</button>
-//   })
-//    : null }

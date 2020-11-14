@@ -1,12 +1,14 @@
 import { React, useState } from "react";
 
 import { hitAPI } from "../api";
-import {Messages} from "./index";
+import {MessageForm} from "./index";
+import { getToken } from "../api";
 
 const Posts = (props) => {
   const allPost = props.postList;
   const filterTerm = props.filterTerm;
   const setPostList = props.setPostList;
+  const [isLoggedIn, setIsLoggedIn] = useState(!!getToken())
 
   // allPost.filter(post =>{ return post.title.includes(filterTerm) || post.description.includes(filterTerm) }).map()
 
@@ -38,11 +40,13 @@ const Posts = (props) => {
               {post.willDeliver ? <p>{post.willDeliver}</p> : null}
               <p><strong>Price:</strong> {post.price}</p>
               <p><strong>Posted on:</strong>{post.createdAt}</p>
-              {!post.isAuthor ? 
-              <button className="messageButton" onClick={() =>
-                  <Messages />
-                }
-              >SEND A MESSAGE ABOUT THIS ITEM</button> 
+              {
+                !post.isAuthor && isLoggedIn ?
+                <MessageForm postId={ post._id } />
+                : null
+              }
+              {!post.isAuthor && isLoggedIn ? // COME BACK TO THIS!! FIGURE OUT WHY MESSAGE BUTTON SHOWS UP WHEN NOT LOGGED IN!!!
+              null 
               :
                (
                 <>
@@ -58,14 +62,16 @@ const Posts = (props) => {
                     DELETE
                   </button>
 
-                  {/* <div className="messages">
-                    {post.messages.map((message, index) => {
-                      <>
-                        <p>{message[index].fromUser.username}</p>
-                        <p>{message[index].content}</p>
+                 {post.isAuthor ? <div className="messageInbox">
+                   <h3>MESSAGES BELOW HERE</h3>
+                    {post.messages.map((message) => {
+                      console.log(post.messages)
+                      return <>
+                        <p>{message.fromUser.username}: {message.content}</p>
+                        
                       </>
                     })}
-                  </div> */}
+                   </div> : null} 
                 </>
               )}
 
